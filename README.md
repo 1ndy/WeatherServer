@@ -33,7 +33,7 @@ $ perl server.pl
 ```
 You should see some nice output about the server starting. Next, run the client:
 ```shell
-$ perl weatherclient.pl
+$ perl client.pl
 ```
 If it can connect to the server, it will ask you for a zip code. Plop one in and watch the magic happen!
 
