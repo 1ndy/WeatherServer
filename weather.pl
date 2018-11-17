@@ -191,7 +191,7 @@ sub extractWeatherData {
 		print("ERROR: $zip_code is not a valid US zip code\n");
 		return "<ERROR>.$zip_code";
 	}
-	#print out more specific location info
+	#store weather data in depth 1 hash
 	my $location = %$weatherjson{'location'};
 	my $currentWeather = %$weatherjson{'currentConditions'};
 	my %weatherdata;
@@ -212,6 +212,7 @@ sub extractWeatherData {
 	return %weatherdata;
 }
 
+#print out more specific location info
 sub printWeatherData {
 	my (%weatherdata) = @_;
 	print("Weather for $weatherdata{'location'}");
