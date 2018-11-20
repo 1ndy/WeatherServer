@@ -26,28 +26,34 @@ sub fetch_weather_data {
 }
 
 #format time good
+
+sub correct_time_format {
+	my ($unixtime) = @_;
+	return substr($unixtime,0,-3);
+}
+
 sub formatGMTimeLong {
 	my ($unixtime) = @_;
 	my $timeformat = "%a %h %d %Y %H:%M:%S GMT";
-	return strftime($timeformat, gmtime(substr($unixtime, 0, -3)));
+	return strftime($timeformat, gmtime(correct_time_format($unixtime)));
 }
 
 sub formatLocalTimeLong {
 	my ($unixtime) = @_;
 	my $timeformat = "%c";
-	return strftime($timeformat, localtime(substr($unixtime, 0, -3)));
+	return strftime($timeformat, localtime(correct_time_format($unixtime)));
 }
 
 sub formatGMTime {
 	my ($unixtime) = @_;
 	my $timeformat = "%X %Z";
-	return strftime($timeformat, gmtime(substr($unixtime, 0, -3)));
+	return strftime($timeformat, gmtime(correct_time_format($unixtime)));
 }
 
 sub formatLocalTime {
 	my ($unixtime) = @_;
 	my $timeformat = "%X %Z";
-	return strftime($timeformat, localtime(substr($unixtime, 0, -3)));
+	return strftime($timeformat, localtime(correct_time_format($unixtime)));
 }
 
 sub validateZipCode {
@@ -198,7 +204,7 @@ sub extractWeatherData {
 	$weatherdata{'zip_code'} = $zip_code;
 	$weatherdata{'location'} = "$location->{'city'},$location->{'stateOrCountry'}";
 	$weatherdata{'source'} = "$currentWeather->{'observationStation'}";
-	$weatherdata{'time'} = "$currentWeather->{'lastUpdate'}{time}";
+	$weatherdata{'time'} = correct_time_format($currentWeather->{'lastUpdated'}{time});
 	$weatherdata{'temperature'} = "$currentWeather->{'temperature'}°F";
 	$weatherdata{'feelsLikeTemperature'} = "$currentWeather->{'feelsLikeTemperature'}°F";
 	$weatherdata{'dewPoint'} = "$currentWeather->{'dewPoint'}°F";
@@ -207,8 +213,8 @@ sub extractWeatherData {
 	$weatherdata{'visibility'} = "$currentWeather->{'visibility'} miles";
 	$weatherdata{'humidity'} = "$currentWeather->{'humidity_S'}%";
 	$weatherdata{'description'} = "$currentWeather->{'shortDescription'}";
-	$weatherdata{'sunrise'} = "$currentWeather->{'sunriseTime'}{time}";
-	$weatherdata{'sunset'} = "$currentWeather->{'sunsetTime'}{time}";
+	$weatherdata{'sunrise'} = correct_time_format($currentWeather->{'sunriseTime'}{time});
+	$weatherdata{'sunset'} = correct_time_format($currentWeather->{'sunsetTime'}{time});
 	return %weatherdata;
 }
 
@@ -216,9 +222,8 @@ sub extractWeatherData {
 sub printWeatherData {
 	my (%weatherdata) = @_;
 	print("Weather for $weatherdata{'location'}");
-	print(" from source $weatherdata->{'source'} on ");
-	print(formatGMTimeLong($weatherdata{'time'})."\n");
-	
+	print(" from source $weatherdata{'source'} on ");
+	print(formatLocalTimeLong($weatherdata{'time'})."\n");
 	print("\tTemperature: $weatherdata{'temperature'}");
 	  print(" (feels like $weatherdata{'feelsLikeTemperature'})\n");
 	print("\tDew Point:   $weatherdata{'dewPoint'}\n");
@@ -227,8 +232,8 @@ sub printWeatherData {
 	print("\tVisibility:  $weatherdata{'visibility'}\n");
 	print("\tHumidty:     $weatherdata{'humidity'}\n");
 	print("\tDescription: $weatherdata{'description'}\n");
-	print("\tSunrise:     ".formatGMTime($weatherdata{'sunrise'})."\n");
-	print("\tSunset:      ".formatGMTime($weatherdata{'sunset'})."\n");
+	print("\tSunrise:     ".formatLocalTime($weatherdata{'sunrise'})."\n");
+	print("\tSunset:      ".formatLocalTime($weatherdata{'sunset'})."\n");
 	return $weatherdata{'zip_code'};
 
 }
